@@ -103,17 +103,17 @@ git clone https://github.com/akug17/Aspire-Coding-Assessment
 # Aspire Coding Assessment :
 
 src/
-├── api/ # API services & mocks
-├── assets/ # Static assets
-├── components/ # Reusable components
-├── hooks/ # Custom hooks
-├── navigation/ # App navigation
-├── screens/ # Feature screens
-├── store/ # Redux and Redux-Saga setup
-├── theme/ # Colors
-├── types/ # Type definitions
-├── utils/ # Utilities
-└── App.tsx # Entry point of the app
+├── api/ # API services & mocks<br />
+├── assets/ # Static assets<br />
+├── components/ # Reusable components<br />
+├── hooks/ # Custom hooks<br />
+├── navigation/ # App navigation<br />
+├── screens/ # Feature screens<br />
+├── store/ # Redux and Redux-Saga setup<br />
+├── theme/ # Colors<br />
+├── types/ # Type definitions<br />
+├── utils/ # Utilities<br />
+└── App.tsx # Entry point of the app<br />
 
 # Project Overview
 

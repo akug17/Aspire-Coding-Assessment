@@ -1,4 +1,4 @@
-![Simulator Screenshot - iPhone SE (3rd generation) - 2025-05-24 at 06 40 43](https://github.com/user-attachments/assets/5c117559-d2a4-4f5a-ac4b-cbc78f969f19)This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
 
 # Getting Started
 

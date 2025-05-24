@@ -95,4 +95,78 @@ To learn more about React Native, take a look at the following resources:
 - [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
 - [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
 - [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
-# Aspire_test
+
+# Clone repository
+
+git clone https://github.com/akug17/Aspire-Coding-Assessment
+
+# Aspire Coding Assessment :
+
+src/
+├── api/ # API services & mocks
+├── assets/ # Static assets
+├── components/ # Reusable components
+├── hooks/ # Custom hooks
+├── navigation/ # App navigation
+├── screens/ # Feature screens
+├── store/ # Redux and Redux-Saga setup
+├── theme/ # Colors
+├── types/ # Type definitions
+├── utils/ # Utilities
+└── App.tsx # Entry point of the app
+
+# Project Overview
+
+- Card carousel with swipe navigation
+- Card management (freeze/unfreeze)
+- Balance information display
+- Transaction spending limits
+- New card creation flow
+
+# Key Features Implemented
+
+- View multiple cards in a horizontal carousel
+- Freeze/unfreeze card functionality
+- Card details display (number, expiry, CVV)
+- Add a new card
+
+# Technical Requirements
+
+- React Native implementation
+- TypeScript integration
+- State management with Redux
+- Unit test coverage
+- Clean, maintainable code structure
+
+# Architecture
+
+# Key Components
+
+- `DebitCardScreen`: Main container component
+- `CardCarousel`: Handles card swiping functionality
+- `Card`: Individual card display component
+- `BalanceInfo`: Displays available balance
+- `SpendingLimit`: Shows spending limits
+- `SettingsOption`: Freeze/unfreeze functionality
+- `AddCardModal`: Add new card
+
+# State Management
+
+- **Redux Toolkit**: Centralized state management
+- **Redux Saga**: Side effects and API calls
+- **Custom Hook (`useCard`)**: Local state and business logic
+
+# useCard
+
+- **Card Data Fetching**: Triggered on component mount via Redux Saga
+- **Freeze/Unfreeze**: Dispatches Redux action with card ID
+- **Scroll Handling**: Calculates visible card index during swipe
+- **State Management**: Combines Redux store with local state
+
+# Technical Highlights
+
+- **Modular Components**: Small, focused UI components
+- **Type Safety**: Comprehensive TypeScript integration
+- **Performance**: Optimized card rendering with FlatList
+- **Testing**: Demonstrated testing for functions, customHook, UI
+- **State Management**: Clean separation of concerns

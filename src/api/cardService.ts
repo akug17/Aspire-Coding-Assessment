@@ -23,7 +23,7 @@ export const createCard = (name: string): Promise<CardProps> => {
     currency: 'S$',
     maxLimit: 5000,
   };
-  return new Promise((resolve) => setTimeout(() => resolve(card), 4000));
+  return new Promise((resolve) => setTimeout(() => resolve(card), 1000));
 };
 
 export const freezeUnfreezeCard = ({

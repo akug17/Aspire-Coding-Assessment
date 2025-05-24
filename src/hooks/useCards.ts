@@ -6,15 +6,14 @@ import {
   toggleFreezeCardSaga,
 } from '../store/slices/cardSlice';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import {
-  Dimensions,
-  Keyboard,
-  LayoutAnimation,
-  NativeScrollEvent,
-  NativeSyntheticEvent,
-} from 'react-native';
+import { Dimensions, Keyboard, LayoutAnimation } from 'react-native';
 import BottomSheet from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheet/BottomSheet';
 import { FlatList } from 'react-native-gesture-handler';
+import {
+  runOnJS,
+  useAnimatedScrollHandler,
+  useSharedValue,
+} from 'react-native-reanimated';
 
 const { width } = Dimensions.get('window');
 
@@ -30,16 +29,22 @@ export const useCards = () => {
     null
   );
   const dispatch = useDispatch();
+  const scrollX = useSharedValue(0);
+
+  const setCurrentVisibleCardOnJS = (index: number) => {
+    setCurrentVisibleCard(Math.abs(index));
+  };
+
+  const onScroll = useAnimatedScrollHandler((event) => {
+    const contentOffsetX = event.contentOffset.x;
+    const newIndex = Math.round(contentOffsetX / width);
+    runOnJS(setCurrentVisibleCardOnJS)(newIndex);
+    scrollX.value = event.contentOffset.x;
+  });
 
   // Hits BE and loads initial cards for a user
   const fetchCards = () => {
     dispatch(loadInitialCardsSaga());
-  };
-
-  const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const contentOffsetX = event.nativeEvent.contentOffset.x;
-    const newIndex = Math.round(contentOffsetX / width);
-    setCurrentVisibleCard(Math.abs(newIndex));
   };
 
   const currentVisibleCardData = useMemo(() => {
@@ -83,7 +88,7 @@ export const useCards = () => {
             index: cards.length - 1,
             animated: true,
           });
-        }, 200);
+        }, 500);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -107,5 +112,6 @@ export const useCards = () => {
     bottomSheetRef,
     onPressFreezeCard,
     flatlistRef,
+    scrollX,
   };
 };

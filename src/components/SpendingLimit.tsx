@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import Animated, { FadeInUp, FadeOutUp } from 'react-native-reanimated';
 
 interface Props {
   currentLimit: number;
@@ -13,7 +14,11 @@ const SpendingLimit: React.FC<Props> = ({ currentLimit, maxLimit }) => {
   );
 
   return (
-    <View style={styles.container}>
+    <Animated.View
+      exiting={FadeOutUp.duration(100)}
+      entering={FadeInUp}
+      style={styles.container}
+    >
       <View style={styles.textRow}>
         <Text style={styles.label}>Debit card spending limit</Text>
         <Text style={styles.limitText}>
@@ -36,7 +41,7 @@ const SpendingLimit: React.FC<Props> = ({ currentLimit, maxLimit }) => {
         />
         <View style={{ flex: 1 - progress }} />
       </View>
-    </View>
+    </Animated.View>
   );
 };
 

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   View,
   Text,
@@ -10,14 +10,24 @@ import {
 import { CardProps } from '../types/Card';
 import { Colors } from '../theme/colors';
 import { splitStringIntoChunks } from '../utils/cardUtils';
+import Animated, {
+  Extrapolation,
+  FlipInEasyX,
+  SharedValue,
+  interpolate,
+  useAnimatedStyle,
+  useSharedValue,
+} from 'react-native-reanimated';
 
 interface Props {
   card: CardProps;
+  scrollX: SharedValue<number>;
+  index: number;
 }
 
 const { width } = Dimensions.get('screen');
 
-export const Card = ({ card }: Props) => {
+export const Card = ({ card, scrollX, index }: Props) => {
   const cardNumber = useMemo(() => {
     return splitStringIntoChunks(card.number).map((string, index) => {
       return (
@@ -29,31 +39,56 @@ export const Card = ({ card }: Props) => {
     });
   }, [card.number]);
 
+  const cardWidth = useSharedValue(0);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    const inputRange = [
+      (index - 1) * cardWidth.value,
+      index * cardWidth.value,
+      (index + 1) * cardWidth.value,
+    ];
+    const scale = interpolate(
+      scrollX.value,
+      inputRange,
+      [0.6, 1, 0.6],
+      Extrapolation.CLAMP
+    );
+
+    return {
+      transform: [{ scale }],
+    };
+  });
+
   return (
-    <View style={styles.cardMainContainer}>
-      <View style={[styles.card, card.frozen && styles.frozen]}>
-        <Image
-          source={require('../assets/AspireLogo.png')}
-          style={styles.aspireLogo}
-        />
-        <View style={styles.cardDetailsContainer}>
-          <Text style={styles.name}>{card.name}</Text>
-          <View style={styles.cardNumber}>{cardNumber}</View>
-          <View style={styles.expiryCvvContainer}>
-            <Text style={styles.expiry}>Thru: {card.expiry}</Text>
-            <Text style={styles.cvv}>CVV: {card.cvv}</Text>
+    <Animated.View entering={FlipInEasyX}>
+      <Animated.View
+        onLayout={(e) => (cardWidth.value = e.nativeEvent.layout.width)}
+        style={[styles.cardMainContainer, animatedStyle]}
+      >
+        <View style={[styles.card, card.frozen && styles.frozen]}>
+          <Image
+            source={require('../assets/AspireLogo.png')}
+            style={styles.aspireLogo}
+          />
+          <View style={styles.cardDetailsContainer}>
+            <Text style={styles.name}>{card.name}</Text>
+            <View style={styles.cardNumber}>{cardNumber}</View>
+            <View style={styles.expiryCvvContainer}>
+              <Text style={styles.expiry}>Thru: {card.expiry}</Text>
+              <Text style={styles.cvv}>CVV: {card.cvv}</Text>
+            </View>
           </View>
+          <Image
+            source={require('../assets/VisaLogo.png')}
+            style={styles.visaLogo}
+          />
         </View>
-        <Image
-          source={require('../assets/VisaLogo.png')}
-          style={styles.visaLogo}
-        />
-      </View>
-      <Pressable style={styles.toggleCardNumber}>
-        <Image source={require('../assets/Group.png')} />
-        <Text style={styles.cardNumberText}>Show card number</Text>
-      </Pressable>
-    </View>
+        <Pressable style={styles.toggleCardNumber}>
+          <Image source={require('../assets/Group.png')} />
+          <Text style={styles.cardNumberText}>Show card number</Text>
+        </Pressable>
+      </Animated.View>
+    </Animated.View>
   );
 };
 
@@ -69,7 +104,8 @@ const styles = StyleSheet.create({
   },
   cardMainContainer: {
     width: width,
-    padding: 10,
+    paddingVertical: 0,
+    paddingHorizontal: 10,
   },
   expiryCvvContainer: {
     flexDirection: 'row',
@@ -113,7 +149,7 @@ const styles = StyleSheet.create({
   toggleCardNumber: {
     position: 'absolute',
     backgroundColor: 'white',
-    top: -25,
+    top: -33,
     right: 10,
     zIndex: -10,
     borderTopLeftRadius: 8,

@@ -24,6 +24,7 @@ const DebitCardScreen: React.FC = () => {
     bottomSheetRef,
     onPressFreezeCard,
     flatlistRef,
+    scrollX,
   } = useCards();
 
   return (
@@ -43,6 +44,7 @@ const DebitCardScreen: React.FC = () => {
             cards={cards}
             onScroll={onScroll}
             flatlistRef={flatlistRef}
+            scrollX={scrollX}
           />
           {currentVisibleCardData && !currentVisibleCardData?.frozen && (
             <SpendingLimit

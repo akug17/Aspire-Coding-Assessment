@@ -8,22 +8,31 @@ import {
   NativeSyntheticEvent,
   StyleSheet,
 } from 'react-native';
-
+import Animated, { SharedValue } from 'react-native-reanimated';
 interface Props {
   cards: CardProps[];
   onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void;
   flatlistRef: React.RefObject<FlatList<any> | null>;
+  scrollX: SharedValue<number>;
 }
 
-export const CardCarousel = ({ cards, onScroll, flatlistRef }: Props) => {
-  const renderItem = useCallback(({ item }: { item: CardProps }) => {
-    return <Card card={item} />;
-  }, []);
+export const CardCarousel = ({
+  cards,
+  onScroll,
+  flatlistRef,
+  scrollX,
+}: Props) => {
+  const renderItem = useCallback(
+    ({ item, index }: { item: CardProps; index: number }) => {
+      return <Card card={item} scrollX={scrollX} index={index} />;
+    },
+    [scrollX]
+  );
 
   const keyExtractor = (item: CardProps) => item.id;
 
   return (
-    <FlatList
+    <Animated.FlatList
       data={cards}
       ref={flatlistRef}
       keyExtractor={keyExtractor}

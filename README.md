@@ -1,4 +1,4 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+![Simulator Screenshot - iPhone SE (3rd generation) - 2025-05-24 at 06 40 43](https://github.com/user-attachments/assets/5c117559-d2a4-4f5a-ac4b-cbc78f969f19)This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
 
 # Getting Started
 
@@ -170,3 +170,8 @@ src/<br />
 - **Performance**: Optimized card rendering with FlatList
 - **Testing**: Demonstrated testing for functions, customHook, UI
 - **State Management**: Clean separation of concerns
+
+Supporting Screenshots :
+![Simulator Screenshot - iPhone SE (3rd generation) - 2025-05-24 at 06 40 43](https://github.com/user-attachments/assets/5ae089e0-2c27-48c1-afff-703ffc14e669)
+
+

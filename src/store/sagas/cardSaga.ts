@@ -1,8 +1,10 @@
 import { call, put, takeEvery, takeLeading } from 'redux-saga/effects';
 import {
+  addUpdateSpendingLimit,
   createCard,
   fetchInitialCards,
   freezeUnfreezeCard,
+  toggleSpendingLimit,
 } from '../../api/cardService';
 import {
   addCard,
@@ -11,9 +13,13 @@ import {
   setAddCardError,
   setCards,
   setError,
+  spendingLimitSuccess,
   toggleFreezeCardSaga,
   toggleFreezeFailure,
   toggleFreezeSuccess,
+  toggleSpendingLimitSaga,
+  toggleSpendingLimitSuccess,
+  updateSpendingLimitSaga,
 } from '../slices/cardSlice';
 import { CardProps } from '../../types/Card';
 
@@ -39,7 +45,14 @@ function* handleAddCard(
 
 function* handleToggleFreeze(
   action: ReturnType<typeof toggleFreezeCardSaga>
-): Generator<any, void, CardProps> {
+): Generator<
+  any,
+  void,
+  {
+    frozen: boolean;
+    id: string;
+  }
+> {
   try {
     const updatedCard = yield call(freezeUnfreezeCard, action.payload);
     yield put(toggleFreezeSuccess(updatedCard));
@@ -48,8 +61,38 @@ function* handleToggleFreeze(
   }
 }
 
+function* handleUpdateSpendingLimit(
+  action: ReturnType<typeof updateSpendingLimitSaga>
+): Generator<any, void, { id: string; spendingLimit: number }> {
+  try {
+    const updatedCard = yield call(addUpdateSpendingLimit, action.payload);
+    yield put(
+      spendingLimitSuccess({
+        id: updatedCard.id,
+        spendingLimit: updatedCard.spendingLimit,
+      })
+    );
+  } catch (error) {}
+}
+
+function* handleToggleSpendingLimit(
+  action: ReturnType<typeof toggleSpendingLimitSaga>
+): Generator<any, void, { spendingLimitEnabled: boolean; id: string }> {
+  try {
+    const spendingLimit = yield call(toggleSpendingLimit, action.payload);
+    yield put(
+      toggleSpendingLimitSuccess({
+        id: spendingLimit.id,
+        spendingLimitEnabled: spendingLimit.spendingLimitEnabled,
+      })
+    );
+  } catch (e) {}
+}
+
 export function* cardSaga() {
   yield takeEvery(loadInitialCardsSaga.type, handleLoadInitialCards);
+  yield takeLeading(updateSpendingLimitSaga.type, handleUpdateSpendingLimit);
   yield takeLeading(addCardSaga.type, handleAddCard);
   yield takeLeading(toggleFreezeCardSaga.type, handleToggleFreeze);
+  yield takeLeading(toggleSpendingLimitSaga.type, handleToggleSpendingLimit);
 }

@@ -4,12 +4,12 @@ import {
   Text,
   StyleSheet,
   Image,
-  Pressable,
   Dimensions,
+  TouchableOpacity,
 } from 'react-native';
 import { CardProps } from '../types/Card';
 import { Colors } from '../theme/colors';
-import { splitStringIntoChunks } from '../utils/cardUtils';
+import { maskedCardNumber, splitStringIntoChunks } from '../utils/cardUtils';
 import Animated, {
   Extrapolation,
   FlipInEasyX,
@@ -28,16 +28,21 @@ interface Props {
 const { width } = Dimensions.get('screen');
 
 export const Card = ({ card, scrollX, index }: Props) => {
+  const [maskCardNumber, setMaskCardNumber] = useState(true);
   const cardNumber = useMemo(() => {
-    return splitStringIntoChunks(card.number).map((string, index) => {
+    const maskUnmaskedCardNumber = maskCardNumber
+      ? maskedCardNumber(card.number)
+      : card.number;
+
+    return splitStringIntoChunks(maskUnmaskedCardNumber).map((string, i) => {
       return (
-        <Text key={string + index} style={styles.number}>
+        <Text key={string + i} style={styles.number}>
           {string}
           {'    '}
         </Text>
       );
     });
-  }, [card.number]);
+  }, [card.number, maskCardNumber]);
 
   const cardWidth = useSharedValue(0);
 
@@ -50,17 +55,71 @@ export const Card = ({ card, scrollX, index }: Props) => {
     const scale = interpolate(
       scrollX.value,
       inputRange,
-      [0.6, 1, 0.6],
+      [0.8, 1, 0.8],
+      Extrapolation.CLAMP
+    );
+    const marginTop = interpolate(
+      scrollX.value,
+      inputRange,
+      [-30, -15, -30],
       Extrapolation.CLAMP
     );
 
     return {
       transform: [{ scale }],
+      marginTop,
+    };
+  });
+
+  const animatedStyleShowHideCard = useAnimatedStyle(() => {
+    const inputRange = [
+      (index - 1) * cardWidth.value,
+      index * cardWidth.value,
+      (index + 1) * cardWidth.value,
+    ];
+    const scale = interpolate(
+      scrollX.value,
+      inputRange,
+      [0.9, 1, 0.9],
+      Extrapolation.CLAMP
+    );
+
+    const margin = interpolate(
+      scrollX.value,
+      inputRange,
+      [50, 0, 50],
+      Extrapolation.CLAMP
+    );
+    const marginRight = interpolate(
+      scrollX.value,
+      inputRange,
+      [25, 0, 25],
+      Extrapolation.CLAMP
+    );
+
+    return {
+      transform: [{ scale }],
+      marginTop: margin,
+      marginRight: marginRight,
     };
   });
 
   return (
     <Animated.View entering={FlipInEasyX}>
+      <Animated.View style={animatedStyleShowHideCard}>
+        <TouchableOpacity
+          onPress={() => {
+            setMaskCardNumber((e) => !e);
+          }}
+          style={[styles.toggleCardNumber, animatedStyle]}
+        >
+          <Image source={require('../assets/Group.png')} />
+          <Text style={styles.cardNumberText}>
+            {maskCardNumber ? 'Show card number' : 'Hide card number'}
+          </Text>
+        </TouchableOpacity>
+      </Animated.View>
+
       <Animated.View
         onLayout={(e) => (cardWidth.value = e.nativeEvent.layout.width)}
         style={[styles.cardMainContainer, animatedStyle]}
@@ -83,10 +142,6 @@ export const Card = ({ card, scrollX, index }: Props) => {
             style={styles.visaLogo}
           />
         </View>
-        <Pressable style={styles.toggleCardNumber}>
-          <Image source={require('../assets/Group.png')} />
-          <Text style={styles.cardNumberText}>Show card number</Text>
-        </Pressable>
       </Animated.View>
     </Animated.View>
   );
@@ -106,6 +161,8 @@ const styles = StyleSheet.create({
     width: width,
     paddingVertical: 0,
     paddingHorizontal: 10,
+    overflow: 'visible',
+    marginTop: -15,
   },
   expiryCvvContainer: {
     flexDirection: 'row',
@@ -115,6 +172,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: Colors.accentGreenLight,
     marginStart: 4,
+    backgroundColor: 'yello',
   },
   card: {
     backgroundColor: Colors.accentGreenLight,
@@ -147,16 +205,16 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   toggleCardNumber: {
-    position: 'absolute',
+    marginRight: 10,
     backgroundColor: 'white',
-    top: -33,
-    right: 10,
-    zIndex: -10,
     borderTopLeftRadius: 8,
     borderTopRightRadius: 8,
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 12,
+    paddingBottom: 20,
+    paddingTop: 10,
+    alignSelf: 'flex-end',
+    paddingHorizontal: 10,
   },
   cardDetailsContainer: {
     marginTop: 14,

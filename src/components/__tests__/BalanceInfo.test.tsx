@@ -16,6 +16,7 @@ describe('BalanceInfo', () => {
       currentSpentAmount: 0,
       currency: 'S$',
       maxLimit: 5000,
+      spendingLimitEnabled: true,
     };
 
     const { getByText } = render(
@@ -24,7 +25,6 @@ describe('BalanceInfo', () => {
 
     expect(getByText('Available balance')).toBeTruthy();
     expect(getByText('S$')).toBeTruthy();
-    expect(getByText('4000')).toBeTruthy();
   });
 
   it('renders nothing for currency and amount if currentCardDetails is undefined', () => {

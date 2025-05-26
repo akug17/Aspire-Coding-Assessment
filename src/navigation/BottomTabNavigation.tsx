@@ -1,13 +1,13 @@
 import React from 'react';
 
-import { HomeScreen } from '../screens/HomeScreen';
+import { HomeScreen } from '../screens/BottomNavScreens/HomeScreen';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import DebitCardScreen from '../screens/DebitCardScreen';
 import { NAVIGATION_ROUTE_NAMES } from '../navigation/navigationRouteNames';
-import { PaymentsScreen } from '../screens/PaymentsScreen';
-import { CreditScreen } from '../screens/CreditScreen';
-import { ProfileScreen } from '../screens/ProfileScreen';
+import { PaymentsScreen } from '../screens/BottomNavScreens/PaymentsScreen';
+import { CreditScreen } from '../screens/BottomNavScreens/CreditScreen';
+import { ProfileScreen } from '../screens/BottomNavScreens/ProfileScreen';
 import { getIcon } from '../utils/cardUtils';
+import { DebitCardStackNavigation } from './DebitCardStackNavigation';
 
 const Tab = createBottomTabNavigator();
 
@@ -33,7 +33,7 @@ const BottomTabNavigation = () => {
           headerShown: false,
           tabBarIcon: () => getIcon(NAVIGATION_ROUTE_NAMES.DEBIT_CARD),
         }}
-        component={DebitCardScreen}
+        component={DebitCardStackNavigation}
       />
       <Tab.Screen
         name={NAVIGATION_ROUTE_NAMES.PAYMENTS}

@@ -9,6 +9,9 @@ interface CardState {
   addCardError?: string;
   freezeCardLoading: boolean;
   freezeCardError?: string;
+  spendingLimitLoading: boolean;
+  spendingLimitError?: string;
+  spendingLimitSuccess: boolean;
 }
 
 const initialState: CardState = {
@@ -19,6 +22,9 @@ const initialState: CardState = {
   addCardError: undefined,
   freezeCardLoading: false,
   freezeCardError: undefined,
+  spendingLimitLoading: false,
+  spendingLimitError: undefined,
+  spendingLimitSuccess: false,
 };
 
 export const cardSlice = createSlice({
@@ -60,18 +66,57 @@ export const cardSlice = createSlice({
       state.freezeCardLoading = false;
     },
     toggleFreezeSuccess: (state, action) => {
-      console.log('toggleFreezeSuccess');
       const card = state.cards.findIndex((c) => c.id === action.payload.id);
-      console.log(action.payload, 'action', state.cards);
       if (card !== -1) {
-        console.log(card, 'CARDF VALUE', state.cards);
         state.cards[card].frozen = action.payload.frozen;
       }
-      state.loading = false;
+      state.freezeCardLoading = false;
     },
     toggleFreezeFailure: (state, action) => {
-      state.error = action.payload;
-      state.loading = false;
+      state.freezeCardError = action.payload;
+      state.freezeCardLoading = false;
+    },
+    updateSpendingLimitSaga: (
+      state,
+      _action: PayloadAction<{ id: string; spendingLimit: number }>
+    ) => {
+      state.spendingLimitError = undefined;
+      state.spendingLimitSuccess = false;
+      state.spendingLimitLoading = true;
+    },
+    spendingLimitSuccess: (
+      state,
+      action: PayloadAction<{ id: string; spendingLimit: number }>
+    ) => {
+      const card = state.cards.findIndex((c) => c.id === action.payload.id);
+      if (card !== -1) {
+        state.cards[card].maxLimit = action.payload.spendingLimit;
+        state.cards[card].spendingLimitEnabled = true;
+        state.spendingLimitSuccess = true;
+      }
+      state.spendingLimitLoading = false;
+    },
+    spendingLimitFailure: (state, action: PayloadAction<string>) => {
+      state.spendingLimitLoading = false;
+      state.spendingLimitSuccess = false;
+      state.spendingLimitError = action.payload;
+    },
+    toggleSpendingLimitSaga: (
+      _state,
+      _action: PayloadAction<{ id: string; spendingLimitEnabled: boolean }>
+    ) => {},
+    toggleSpendingLimitSuccess: (
+      state,
+      action: PayloadAction<{ id: string; spendingLimitEnabled: boolean }>
+    ) => {
+      const card = state.cards.findIndex((c) => c.id === action.payload.id);
+      if (card !== -1) {
+        state.cards[card].spendingLimitEnabled =
+          action.payload.spendingLimitEnabled;
+      }
+    },
+    updateSpendingLimitSuccess: (state, action: PayloadAction<boolean>) => {
+      state.spendingLimitSuccess = action.payload;
     },
     setAddCardLoading: (state, action: PayloadAction<boolean>) => {
       state.addCardLoading = action.payload;
@@ -94,6 +139,11 @@ export const {
   toggleFreezeSuccess,
   toggleFreezeCardSaga,
   toggleFreezeFailure,
+  updateSpendingLimitSaga,
+  spendingLimitSuccess,
+  updateSpendingLimitSuccess,
+  toggleSpendingLimitSaga,
+  toggleSpendingLimitSuccess,
 } = cardSlice.actions;
 
 export default cardSlice.reducer;

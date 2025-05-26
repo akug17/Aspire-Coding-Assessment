@@ -9,4 +9,11 @@ export interface CardProps {
   currency: string;
   currentSpentAmount: number;
   maxLimit: number;
+  spendingLimitEnabled: boolean;
+}
+
+export interface SpendingLimitValidation {
+  msg: string;
+  error: boolean;
+  buttonDisabled: boolean;
 }

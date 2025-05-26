@@ -47,7 +47,9 @@ const SpendingLimit: React.FC<Props> = ({ currentLimit, maxLimit }) => {
 
 const styles = StyleSheet.create({
   container: {
-    margin: 16,
+    marginHorizontal: 16,
+    marginBottom: -25,
+    marginTop: '15%',
   },
   textRow: {
     flexDirection: 'row',
@@ -80,7 +82,6 @@ const styles = StyleSheet.create({
   },
   progressBarFill: {
     backgroundColor: '#01D167',
-
     marginLeft: -2,
   },
 });

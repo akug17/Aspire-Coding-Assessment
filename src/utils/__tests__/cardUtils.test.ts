@@ -1,11 +1,27 @@
+import { CardProps } from '../../types/Card';
 import {
   splitStringIntoChunks,
   generateCardNumber,
   generateCardExpiry,
   generateCardCvv,
-} from '../cardUtils'; // Update with correct path
+  maskedCardNumber,
+  validateSpendingAmount,
+} from '../cardUtils';
 
-// Mock Image component
+const mockCardData: CardProps = {
+  id: '1',
+  name: 'John Doe',
+  number: '1234567812345678',
+  expiry: '12/30',
+  frozen: false,
+  cvv: '123',
+  availableBalance: 1000,
+  currency: '$',
+  currentSpentAmount: 200,
+  maxLimit: 1000,
+  spendingLimitEnabled: true,
+};
+
 jest.mock('react-native', () => ({
   Image: jest.fn(() => null),
 }));
@@ -76,5 +92,37 @@ describe('Utility Functions', () => {
       expect(Number(cvv)).toBeGreaterThanOrEqual(100);
       expect(Number(cvv)).toBeLessThanOrEqual(999);
     });
+  });
+});
+
+describe('validateSpendingAmount', () => {
+  it('should return error if limit is less than spent amount', () => {
+    const result = validateSpendingAmount('100', mockCardData);
+    expect(result).toEqual({
+      msg: 'Limit cannot be less than current spent amount',
+      error: true,
+      buttonDisabled: true,
+    });
+  });
+
+  it('should return success message for valid limit', () => {
+    const result = validateSpendingAmount('300', mockCardData);
+    expect(result).toEqual({
+      msg: 'Here weekly means the last 7 days - not the calendar week',
+      error: false,
+      buttonDisabled: false,
+    });
+  });
+
+  it('should disable button if input is empty', () => {
+    const result = validateSpendingAmount('', mockCardData);
+    expect(result.buttonDisabled).toBe(true);
+  });
+});
+
+describe('maskedCardNumber', () => {
+  it('should mask all but last 4 digits', () => {
+    const result = maskedCardNumber('1234567812345678');
+    expect(result).toBe('••••••••••••5678');
   });
 });

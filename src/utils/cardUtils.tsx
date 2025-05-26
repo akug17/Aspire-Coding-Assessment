@@ -1,5 +1,6 @@
 import { Image } from 'react-native';
 import { NAVIGATION_ROUTE_NAMES } from '../navigation/navigationRouteNames';
+import { CardProps } from '../types/Card';
 
 const splitStringIntoChunks = (str: string, chunkSize = 5) => {
   const chunks = [];
@@ -48,10 +49,41 @@ const getIcon = (screenName: string) => {
   }
 };
 
+const validateSpendingAmount = (
+  limit: string,
+  currentVisibleCardData: CardProps
+) => {
+  if (parseInt(limit, 10) < currentVisibleCardData.currentSpentAmount) {
+    return {
+      msg: 'Limit cannot be less than current spent amount',
+      error: true,
+      buttonDisabled: true,
+    };
+  }
+
+  return {
+    msg: 'Here weekly means the last 7 days - not the calendar week',
+    error: false,
+    buttonDisabled: limit.length === 0 ? true : false,
+  };
+};
+const maskedCardNumber = (cardNumber: string): string => {
+  if (!cardNumber || cardNumber.length < 4) {
+    return cardNumber;
+  }
+
+  const visibleDigits = cardNumber.slice(-4);
+  const masked = cardNumber.slice(0, -4).replace(/\d/g, '•');
+
+  return `${masked}${visibleDigits}`;
+};
+
 export {
   splitStringIntoChunks,
   generateCardNumber,
   generateCardExpiry,
   generateCardCvv,
   getIcon,
+  validateSpendingAmount,
+  maskedCardNumber,
 };

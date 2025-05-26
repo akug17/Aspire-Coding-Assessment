@@ -15,7 +15,8 @@ export const cards: Array<CardProps> = [
     availableBalance: 3000,
     currency: 'S$',
     currentSpentAmount: 350,
-    maxLimit: 5000,
+    maxLimit: 500,
+    spendingLimitEnabled: true,
   },
   {
     id: Math.random().toString(36).substring(2, 11),
@@ -28,5 +29,6 @@ export const cards: Array<CardProps> = [
     currency: 'S$',
     currentSpentAmount: 3000,
     maxLimit: 5000,
+    spendingLimitEnabled: true,
   },
 ];

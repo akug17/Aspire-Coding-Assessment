@@ -4,9 +4,15 @@ import {
   addCardSaga,
   loadInitialCardsSaga,
   toggleFreezeCardSaga,
+  toggleSpendingLimitSaga,
 } from '../store/slices/cardSlice';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Dimensions, Keyboard, LayoutAnimation } from 'react-native';
+import {
+  Dimensions,
+  InteractionManager,
+  Keyboard,
+  LayoutAnimation,
+} from 'react-native';
 import BottomSheet from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheet/BottomSheet';
 import { FlatList } from 'react-native-gesture-handler';
 import {
@@ -14,6 +20,8 @@ import {
   useAnimatedScrollHandler,
   useSharedValue,
 } from 'react-native-reanimated';
+import { useNavigation } from '@react-navigation/native';
+import { NAVIGATION_ROUTE_NAMES } from '../navigation/navigationRouteNames';
 
 const { width } = Dimensions.get('window');
 
@@ -22,6 +30,7 @@ export const useCards = () => {
     (state: RootState) => state.card
   );
 
+  const navigation = useNavigation();
   const bottomSheetRef = useRef<BottomSheet>(null);
   const flatlistRef = useRef<FlatList>(null);
 
@@ -94,8 +103,24 @@ export const useCards = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cards.length]);
 
+  const onToggleSpendingLimit = () => {
+    dispatch(
+      toggleSpendingLimitSaga({
+        id: currentVisibleCardData?.id!,
+        spendingLimitEnabled: !currentVisibleCardData?.spendingLimitEnabled,
+      })
+    );
+  };
+
+  const onPressSpendingLimit = () => {
+    navigation.navigate(
+      NAVIGATION_ROUTE_NAMES.DEBIT_CARD_STACK.ADD_SPENDING_LIMIT,
+      { currentVisibleCardData }
+    );
+  };
+
   useEffect(() => {
-    fetchCards();
+    InteractionManager.runAfterInteractions(fetchCards);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -113,5 +138,7 @@ export const useCards = () => {
     onPressFreezeCard,
     flatlistRef,
     scrollX,
+    onPressSpendingLimit,
+    onToggleSpendingLimit,
   };
 };
